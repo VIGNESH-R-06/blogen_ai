@@ -2,27 +2,33 @@ import os
 from dotenv import load_dotenv
 from mistralai import Mistral
 
-# Load environment variables from .env if exists
-dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 
-api_key = os.getenv("MISTRAL_API_KEY")
-if not api_key:
-    raise ValueError(
-        "Please set the MISTRAL_API_KEY in .env file or environment variable.")
+def genblog(topic: str, api_key: str = None) -> str:
+    """
+    Generate a unique, plagiarism-free blog post for the given topic.
 
-model = "mistral-large-latest"
-client = Mistral(api_key=api_key)
+    Args:
+        topic (str): The topic to generate the blog about.
 
+    Returns:
+        str: Generated blog content.
+    """
 
-def blogen(topic: str) -> str:
-    """Generate a blog post for a given topic."""
+    if api_key is None:
+        api_key = os.getenv("MISTRAL_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "Please provide your MISTRAL_API_KEY as an argument or set it as an environment variable."
+        )
+
+    client = Mistral(api_key=api_key)
+    model = "mistral-large-latest"
+
     response = client.chat.complete(
         model=model,
         messages=[
-            {"role": "system", "content": "You are an expert social media content writer."},
-            {"role": "user", "content": f"Write a captivating blog post about {topic}."}
+            {"role": "system", "content": "You are an expert content writer. Generate engaging, unique, and plagiarism-free blog posts."},
+            {"role": "user", "content": f"Write a detailed blog post about {topic}."}
         ]
     )
     return response.choices[0].message.content
