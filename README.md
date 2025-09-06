@@ -20,6 +20,7 @@ Install the library via pip:
 
 ```bash
 pip install blogen_ai
+
 ```
 
 ---
